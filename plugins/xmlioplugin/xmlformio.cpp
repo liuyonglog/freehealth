@@ -63,9 +63,9 @@ using namespace Trans::ConstantTranslations;
 
 static inline Core::IPatient *patient() {return Core::ICore::instance()->patient();}
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////  Inline static functions  //////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+/////////////////////////  Inline static functions  ////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 static inline Core::ISettings *settings()  { return Core::ICore::instance()->settings(); }
 static inline Internal::XmlFormContentReader *reader() {return Internal::XmlFormContentReader::instance();}
@@ -80,9 +80,9 @@ static inline XmlFormName &formName(const QString &uuid, QHash<QString, XmlFormN
     return cache[form.uid];
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////  XmlFormIO  /////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//////////////////////  XmlFormIO  /////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 XmlFormIO::XmlFormIO(QObject *parent) :
     IFormIO(parent),
     m_Mute(false),
@@ -210,11 +210,12 @@ static void checkFormIODescription(QList<Form::FormIODescription *> &forms, cons
 
 QList<Form::FormIODescription *> XmlFormIO::getFormFileDescriptions(const Form::FormIOQuery &query) const
 {
+    WARN_FUNC;
     qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
     QList<Form::FormIODescription *> toReturn;
     QStringList includedUids;
 //    qWarning() << query.formUuid() << query.forceFileReading();
-
+    qDebug() << "query.forceFileReading() = " << query.forceFileReading();
     if (!query.forceFileReading()) {
         // Get from database
         toReturn = base()->getFormDescription(query);
@@ -229,6 +230,7 @@ QList<Form::FormIODescription *> XmlFormIO::getFormFileDescriptions(const Form::
 
     qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
     // Get a specific form description
+    qDebug() << "query.formUuid(): " << query.formUuid();
     if (!query.formUuid().isEmpty()) {
         XmlFormName &form = formName(query.formUuid(), m_FormNames);
 //        XmlFormName form(query.formUuid());
@@ -240,11 +242,12 @@ QList<Form::FormIODescription *> XmlFormIO::getFormFileDescriptions(const Form::
                 Form::IFormIO *iformio = const_cast<Form::IFormIO*>(const_iformio);
                 desc->setIoFormReader(iformio);
                 toReturn.append(desc);
-                return toReturn;
+                //return toReturn;
             }
         }
-        return toReturn;
+        //return toReturn;
     }
+    qDebug() << " HELLO I AM HERE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
 
     qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
     // Get all form files
@@ -254,11 +257,13 @@ QList<Form::FormIODescription *> XmlFormIO::getFormFileDescriptions(const Form::
         path << settings()->path(Core::ISettings::UserCompleteFormsPath);
         path << settings()->path(Core::ISettings::DataPackCompleteFormsInstallPath);
         foreach(const QString &startPath, path) {
+            qDebug() << "complete form startPath: " << startPath;
             QDir start(startPath);
             // get all forms included in this path
             foreach(const QFileInfo &file, Utils::getFiles(start, "central.xml", Utils::Recursively)) {
                 const QString &fileName = file.absoluteFilePath();
                 XmlFormName &form = formName(fileName, m_FormNames);
+                //TODO: double check this
                 if (includedUids.contains(form.uid))
                     continue;
 
@@ -275,14 +280,16 @@ QList<Form::FormIODescription *> XmlFormIO::getFormFileDescriptions(const Form::
 
     qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
     if (query.typeOfForms() & Form::FormIOQuery::SubForms) {
-        QStringList path;
-        path << settings()->path(Core::ISettings::SubFormsPath);
-        path << settings()->path(Core::ISettings::UserSubFormsPath);
-        path << settings()->path(Core::ISettings::DataPackSubFormsInstallPath);
-        foreach(const QString &startPath, path) {
+        QStringList pathList;
+        pathList << settings()->path(Core::ISettings::SubFormsPath);
+        pathList << settings()->path(Core::ISettings::UserSubFormsPath);
+        pathList << settings()->path(Core::ISettings::DataPackSubFormsInstallPath);
+        foreach(const QString &startPath, pathList) {
             QDir start(startPath);
+            qDebug() << "subform startPath: " << startPath;
             foreach(const QFileInfo &file, Utils::getFiles(start, "central.xml", Utils::Recursively)) {
                 const QString &fileName = file.absoluteFilePath();
+                qDebug() << fileName;
                 XmlFormName &form = formName(fileName, m_FormNames);
                 if (includedUids.contains(form.uid))
                     continue;
@@ -511,7 +518,7 @@ bool XmlFormIO::checkDatabaseFormFileForUpdates() const
         query.setFormUuid(dbFormUid);
         query.setForceFileReading(true);
 
-        // get actual version number of a form in database
+        // get version number of a form in database
         Utils::VersionNumber dbVersion(dbDescription->data(Form::FormIODescription::Version).toString());
 
         // get file description list of that form and iterate through this list

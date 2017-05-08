@@ -34,8 +34,10 @@
  * \fn void Form::FormIOQuery::setExcludeGenderSpecific(bool excludeGenderSpecific)
  * \brief Sets GenderSpecific filter for form searches.
  *
- * Some forms are gender specific, by setting this property to \e true, all form gender information will be checked
- * and excluded if the gender is different to the current patient gender. If set to \e false, gender is not checked.
+ * Some forms are gender specific, by setting this property to \e true, all form
+ * gender information will be checked
+ * and excluded if the gender is different to the current patient gender. If set
+ * to \e false, gender is not checked.
  * By default, this property is set to false.
  */
 
@@ -49,27 +51,32 @@
 
 /**
  * \class Form::FormIODescription
- * Description of a form extracted from a Form::IFormIO engine. This is different than
- * Form::FormItemSpec. This description only handles information from the IO engine, not usable in
- * forms view/model computation.
- * The description contains informations about the Form name, category, author, version, FreeMedForms compatibility version,
- * country, and many other things. You can read this information very convenient through this FormIODescription class, using
+ * Description of a form extracted from a Form::IFormIO engine.
+ * This is different from Form::FormItemSpec. This description only handles
+ * information from the IO engine, not usable in forms view/model computation.
+ * The description contains informations about the Form name, category, author,
+ * version, EHR compatibility version, country, etc.
+ * You can read those informations through this FormIODescription class, using
  * the data() method with the right DataRepresentation parameters.
  */
 
 /**
  * \class Form::IFormIO
- * This object interface is the in/out form object. It is used to read and create the patient files.\n
+ * This object interface is the in/out form object. It is used to read and
+ * create the patient files.\n
  * All Form::IFormIO engines are in charge of :
- * - correctly manage form uids in a persistent in time format
+ * - correctly manage form uids in a persistent format
  * - reading and interpreting raw source form files
- * - retrieving all informations on Form::FormItem like specs, scripts, translations, full description...
+ * - retrieving all informations on Form::FormItem like specs, scripts,
+ *   translations, full description...
  * - creating the forms QObject tree. The root parent is an empty Form::FormMain.
- * - preparing the forms widgets using the Form::IFormWidgetFactory objects stored in the
- *   plugin manager object pool
- * - store raw source into a specific user database (to ensure that anyone in the network can create the form)
+ * - preparing the forms widgets using the Form::IFormWidgetFactory objects
+ *   stored in the plugin manager object pool
+ * - store raw source into a specific user database to ensure that anyone in the
+ *   network can create the form
  * The engines must not :\n
- * - create a cache of Form::FormMain objects. This cache is managed by the Form::FormManager
+ * - create a cache of Form::FormMain objects. This cache is managed by the
+ *   Form::FormManager
 */
 
 /** \fn virtual QString Form::IFormIO::name() const
@@ -100,7 +107,8 @@
   * form uuid \e uuidOrAbsPath.\n
   * The uuid can be any of the following:
   * - a string uuid
-  * - a absolute path to a file. The engine is in charge of computing the corresponding persistent in time uuid.
+  * - a absolute path to a file.
+  * The engine is in charge of computing the corresponding persistent in time uuid.
 */
 
 /** \fn virtual bool Form::IFormIO::loadPmhCategories(const QString &uuidOrAbsPath) const = 0;
