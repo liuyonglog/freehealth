@@ -121,7 +121,8 @@ private:
                        );
     bool checkDatabaseVersion();
 
-    bool saveContent(const QString &formUid, const QString &xmlContent,
+    bool saveContent(const QString &formUid,
+                     const QString &xmlContent,
                      const int type,
                      const QString &modeName = QString::null,
                      const QString &dateTime = QDateTime::currentDateTimeUtc().toString(Qt::ISODate));

@@ -37,7 +37,7 @@ namespace Constants {
     const char * const DB_VERSION        = "0.1";
 
     // For database management
-    /** \brief Enumerates all the tables of the users' database */
+    /** \brief Enumerates all the tables of the database */
     enum Tables
     {
         Table_FORMS = 0,
@@ -50,7 +50,9 @@ namespace Constants {
     enum fieldsFORMS
     {
         FORM_ID = 0,
-        FORM_UUID, FORM_ORIGINALUID, FORM_ORIGINALDATE,
+        FORM_UUID,
+        FORM_ORIGINALUID,
+        FORM_ORIGINALDATE,
         FORM_MaxParam
     };
 
