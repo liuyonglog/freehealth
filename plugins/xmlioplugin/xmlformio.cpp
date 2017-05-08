@@ -19,10 +19,9 @@
  *  If not, see <http://www.gnu.org/licenses/>.                            *
  ***************************************************************************/
 /***************************************************************************
- *  Main developer: Eric MAEKER, <eric.maeker@gmail.com>                   *
- *  Contributors:                                                          *
- *       NAME <MAIL@ADDRESS.COM>                                           *
- *       NAME <MAIL@ADDRESS.COM>                                           *
+ *  Authors: Eric MAEKER, <eric.maeker@gmail.com>                          *
+ *           Jerome PINGUET, <jerome@jerome.cc>                            *
+ *           NAME <MAIL@ADDRESS.COM>                                       *
  ***************************************************************************/
 #include "xmlformio.h"
 #include "constants.h"
@@ -110,11 +109,13 @@ bool XmlFormIO::canReadForms(const QString &uuidOrAbsPath) const
 bool XmlFormIO::canReadForms(const Form::FormIOQuery &query) const
 {
     XmlFormName &form = formName(query.formUuid(), m_FormNames);
-//    qWarning() << "CanRead" << query.formUuid() << form.uid << form.absFileName;
 
+    // Check if the form is in the m_ReadableForms cache
+    // if true, returns the boolean value associated witht the key
     if (m_ReadableForms.keys().contains(form.absFileName)) {
         return m_ReadableForms.value(form.absFileName);
     }
+
     m_Error.clear();
     m_AbsFileName.clear();
     QFileInfo formFile(form.absFileName);
@@ -184,7 +185,9 @@ Form::FormIODescription *XmlFormIO::readFileInformation(const QString &uuidOrAbs
     return reader()->readFileInformation(uuidOrAbsPath);
 }
 
-// Check the descriptions according to the query settings. Warning: \e forms is modified
+/** Check the descriptions according to the query settings.
+ *  Warning: \e forms is modified
+ */
 static void checkFormIODescription(QList<Form::FormIODescription *> &forms, const Form::FormIOQuery &query, const XmlFormIO *reader)
 {
     // Check gender specific
@@ -214,8 +217,6 @@ QList<Form::FormIODescription *> XmlFormIO::getFormFileDescriptions(const Form::
     qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
     QList<Form::FormIODescription *> toReturn;
     QStringList includedUids;
-//    qWarning() << query.formUuid() << query.forceFileReading();
-    qDebug() << "query.forceFileReading() = " << query.forceFileReading();
     if (!query.forceFileReading()) {
         // Get from database
         toReturn = base()->getFormDescription(query);
@@ -230,10 +231,8 @@ QList<Form::FormIODescription *> XmlFormIO::getFormFileDescriptions(const Form::
 
     qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
     // Get a specific form description
-    qDebug() << "query.formUuid(): " << query.formUuid();
     if (!query.formUuid().isEmpty()) {
         XmlFormName &form = formName(query.formUuid(), m_FormNames);
-//        XmlFormName form(query.formUuid());
         if (canReadForms(query)) {
             Form::FormIODescription *desc = reader()->readFileInformation(form, query);
             if (desc) {
@@ -242,13 +241,9 @@ QList<Form::FormIODescription *> XmlFormIO::getFormFileDescriptions(const Form::
                 Form::IFormIO *iformio = const_cast<Form::IFormIO*>(const_iformio);
                 desc->setIoFormReader(iformio);
                 toReturn.append(desc);
-                //return toReturn;
             }
         }
-        //return toReturn;
     }
-    qDebug() << " HELLO I AM HERE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
-
     qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
     // Get all form files
     if (query.typeOfForms() & Form::FormIOQuery::CompleteForms) {
@@ -257,16 +252,13 @@ QList<Form::FormIODescription *> XmlFormIO::getFormFileDescriptions(const Form::
         path << settings()->path(Core::ISettings::UserCompleteFormsPath);
         path << settings()->path(Core::ISettings::DataPackCompleteFormsInstallPath);
         foreach(const QString &startPath, path) {
-            qDebug() << "complete form startPath: " << startPath;
             QDir start(startPath);
             // get all forms included in this path
             foreach(const QFileInfo &file, Utils::getFiles(start, "central.xml", Utils::Recursively)) {
                 const QString &fileName = file.absoluteFilePath();
                 XmlFormName &form = formName(fileName, m_FormNames);
-                //TODO: double check this
                 if (includedUids.contains(form.uid))
                     continue;
-
                 if (canReadForms(fileName)) {
                     Form::FormIODescription *desc = reader()->readFileInformation(form);
                     if (desc) {
@@ -286,10 +278,8 @@ QList<Form::FormIODescription *> XmlFormIO::getFormFileDescriptions(const Form::
         pathList << settings()->path(Core::ISettings::DataPackSubFormsInstallPath);
         foreach(const QString &startPath, pathList) {
             QDir start(startPath);
-            qDebug() << "subform startPath: " << startPath;
             foreach(const QFileInfo &file, Utils::getFiles(start, "central.xml", Utils::Recursively)) {
                 const QString &fileName = file.absoluteFilePath();
-                qDebug() << fileName;
                 XmlFormName &form = formName(fileName, m_FormNames);
                 if (includedUids.contains(form.uid))
                     continue;
@@ -313,9 +303,6 @@ QList<Form::FormIODescription *> XmlFormIO::getFormFileDescriptions(const Form::
 QList<Form::FormMain *> XmlFormIO::loadAllRootForms(const QString &uuidOrAbsPath) const
 {
     XmlFormName &form = formName(uuidOrAbsPath, m_FormNames);
-//    XmlFormName form(uuidOrAbsPath);
-//    qWarning() << Q_FUNC_INFO << uuidOrAbsPath << form.uid << form.absFileName;
-
     QList<Form::FormMain *> toReturn;
     QString uuid = uuidOrAbsPath;
     if (uuidOrAbsPath.isEmpty()) {
@@ -371,7 +358,6 @@ QList<Form::FormMain *> XmlFormIO::loadAllRootForms(const QString &uuidOrAbsPath
         XmlFormName mode(form.uid);
         mode.absFileName = fakeFileName;
         mode.modeName = it.key();
-//        qWarning() << "MODE" << mode.absFileName << mode.uid;
         if (!reader()->loadForm(mode, root)) {
             LOG_ERROR("Form not readable: " + fakeFileName);
         } else {

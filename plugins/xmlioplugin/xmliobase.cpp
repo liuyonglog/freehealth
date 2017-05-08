@@ -133,7 +133,7 @@ XmlIOBase::XmlIOBase(QObject *parent) :
     addField(Table_FORMS, FORM_ID,           "FORM_ID",        FieldIsUniquePrimaryKey);
     addField(Table_FORMS, FORM_UUID,         "FORM_UUID",      FieldIsShortText);
     addField(Table_FORMS, FORM_ORIGINALUID,  "FORM_ORG_UUID",  FieldIsShortText);
-    addField(Table_FORMS, FORM_ORIGINALDATE, "FORM_ORG_DATE",  FieldIsDate);
+    addField(Table_FORMS, FORM_ORIGINALDATE, "FORM_ORG_DATE",  FieldIsIsoUtcDateTime);
     addIndex(Table_FORMS, FORM_UUID);
     addIndex(Table_FORMS, FORM_ORIGINALUID);
 
@@ -1081,7 +1081,7 @@ bool XmlIOBase::saveFiles(const XmlFormName &form, const QString &subDir, const 
  * inside a transaction it does not call neither QSqlDatabase::commit(), nor
  * QSqlDatabase::rollback().
 */
-bool XmlIOBase::saveContent(const QString &formUid, const QString &xmlContent, const int type, const QString &modeName, const QDateTime &date)
+bool XmlIOBase::saveContent(const QString &formUid, const QString &xmlContent, const int type, const QString &modeName, const QString &dateTime)
 {
     QSqlDatabase DB = database();
     if (!connectedDatabase(DB, __LINE__))
@@ -1114,7 +1114,7 @@ bool XmlIOBase::saveContent(const QString &formUid, const QString &xmlContent, c
         query.bindValue(FORM_ID, QVariant());
         query.bindValue(FORM_UUID, normalizedFormUid(formUid));
         query.bindValue(FORM_ORIGINALUID, formUid);
-        query.bindValue(FORM_ORIGINALDATE, date);
+        query.bindValue(FORM_ORIGINALDATE, dateTime);
         if (query.exec()) {
             formId = query.lastInsertId().toInt();
         } else {
