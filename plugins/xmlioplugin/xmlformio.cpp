@@ -248,8 +248,11 @@ QList<Form::FormIODescription *> XmlFormIO::getFormFileDescriptions(const Form::
     // Get all form files
     if (query.typeOfForms() & Form::FormIOQuery::CompleteForms) {
         QStringList path;
-        path << settings()->path(Core::ISettings::CompleteFormsPath);
-        path << settings()->path(Core::ISettings::UserCompleteFormsPath);
+        #ifdef QT_DEBUG
+            path << settings()->path(Core::ISettings::CompleteFormsPath);
+        #else
+            path << settings()->path(Core::ISettings::UserCompleteFormsPath);
+        #endif
         path << settings()->path(Core::ISettings::DataPackCompleteFormsInstallPath);
         foreach(const QString &startPath, path) {
             QDir start(startPath);
@@ -273,8 +276,11 @@ QList<Form::FormIODescription *> XmlFormIO::getFormFileDescriptions(const Form::
     qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
     if (query.typeOfForms() & Form::FormIOQuery::SubForms) {
         QStringList pathList;
-        pathList << settings()->path(Core::ISettings::SubFormsPath);
-        pathList << settings()->path(Core::ISettings::UserSubFormsPath);
+        #ifdef QT_DEBUG
+            pathList << settings()->path(Core::ISettings::SubFormsPath);
+        #else
+            pathList << settings()->path(Core::ISettings::UserSubFormsPath);
+        #endif
         pathList << settings()->path(Core::ISettings::DataPackSubFormsInstallPath);
         foreach(const QString &startPath, pathList) {
             QDir start(startPath);

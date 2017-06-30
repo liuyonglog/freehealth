@@ -32,11 +32,14 @@
 #include <coreplugin/isettings.h>
 
 #include <utils/global.h>
+#include <utils/fileutils.h>
 #include <extensionsystem/pluginmanager.h>
 
 #include <QEvent>
 #include <QGridLayout>
 #include <QProgressDialog>
+#include <QDebug>
+#include <QDir>
 
 using namespace Form;
 using namespace Internal;
@@ -75,6 +78,36 @@ void FirstRunFormManagerWizardPage::initializePage()
         layout->addWidget(selector, 0, 0);
         adjustSize();
         selector->updateGeometry();
+
+        // copy forms from bundle dir to user dir
+        qDebug() << settings()->path(Core::ISettings::SubFormsPath)
+                 << settings()->path(Core::ISettings::UserSubFormsPath);
+        QDir dirSub(settings()->path(Core::ISettings::SubFormsPath));
+        QDir dirComplete(settings()->path(Core::ISettings::CompleteFormsPath));
+        qDebug() << "sub";
+        QString sub;
+        foreach(sub, dirSub.entryList())
+            qDebug() << sub;
+        QString complete;
+        qDebug() << "complete";
+        foreach(complete, dirComplete.entryList())
+            qDebug() << complete;
+        bool subOk = Utils::copyRecursively(settings()->path(Core::ISettings::SubFormsPath),
+                                            settings()->path(Core::ISettings::UserSubFormsPath));
+        if (subOk) {
+            qWarning() << "copy of subforms from bundle dir to user dir ok";
+        } else {
+            qWarning() << "copy of subforms from bundle dir to user dir failed";
+        }
+        qDebug() << settings()->path(Core::ISettings::CompleteFormsPath)
+                 << settings()->path(Core::ISettings::UserCompleteFormsPath);
+        bool completeOk = Utils::copyRecursively(settings()->path(Core::ISettings::CompleteFormsPath),
+                                                 settings()->path(Core::ISettings::UserCompleteFormsPath));
+        if (completeOk) {
+            qWarning() << "copy of completeforms from bundle dir to user dir ok";
+        } else {
+            qWarning() << "copy of completeforms from bundle dir to user dir failed";
+        }
 
         // check all forms (using IFormIO::checkForUpdates)
         QList<Form::IFormIO *> list = pluginManager()->getObjects<Form::IFormIO>();

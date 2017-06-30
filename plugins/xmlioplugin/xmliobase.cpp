@@ -393,16 +393,16 @@ QList<Form::FormIODescription *> XmlIOBase::getFormDescription(const Form::FormI
         if (formQuery.typeOfForms() & Form::FormIOQuery::CompleteForms) {
             uid << Utils::Field(Constants::Table_FORMS, Constants::FORM_UUID,
                                 QString("like '%1%'").arg(Core::Constants::TAG_APPLICATION_COMPLETEFORMS_PATH));
-            uid << Utils::Field(Constants::Table_FORMS, Constants::FORM_UUID,
-                                QString("like '%1%'").arg(Core::Constants::TAG_APPLICATION_USER_COMPLETEFORMS_PATH));
+            /*uid << Utils::Field(Constants::Table_FORMS, Constants::FORM_UUID,
+                                QString("like '%1%'").arg(Core::Constants::TAG_APPLICATION_USER_COMPLETEFORMS_PATH));*/
             uid << Utils::Field(Constants::Table_FORMS, Constants::FORM_UUID,
                                 QString("like '%1%'").arg(Core::Constants::TAG_DATAPACK_COMPLETEFORMS_PATH));
         }
         if (formQuery.typeOfForms() & Form::FormIOQuery::SubForms) {
             uid << Utils::Field(Constants::Table_FORMS, Constants::FORM_UUID,
                                 QString("like '%1%'").arg(Core::Constants::TAG_APPLICATION_SUBFORMS_PATH));
-            uid << Utils::Field(Constants::Table_FORMS, Constants::FORM_UUID,
-                                QString("like '%1%'").arg(Core::Constants::TAG_APPLICATION_USER_SUBFORMS_PATH));
+            /*uid << Utils::Field(Constants::Table_FORMS, Constants::FORM_UUID,
+                                QString("like '%1%'").arg(Core::Constants::TAG_APPLICATION_USER_SUBFORMS_PATH));*/
             uid << Utils::Field(Constants::Table_FORMS, Constants::FORM_UUID,
                                 QString("like '%1%'").arg(Core::Constants::TAG_DATAPACK_SUBFORMS_PATH));
         }

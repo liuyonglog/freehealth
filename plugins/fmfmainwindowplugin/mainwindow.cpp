@@ -424,8 +424,14 @@ bool MainWindow::openFile()
 {
     // Ask user for a patient form dir
     QString dir;
-    dir = QFileDialog::getExistingDirectory(this, tr("Choose a patient file directory"),
-                                            settings()->path(Core::ISettings::CompleteFormsPath));
+    QString path;
+#ifdef QT_DEBUG
+        path = settings()->path(Core::ISettings::CompleteFormsPath);
+#else
+        path = settings()->path(Core::ISettings::UserCompleteFormsPath);
+#endif
+    dir = QFileDialog::getExistingDirectory(this, tr("Choose a patient file directory"), path);
+
     // If one file is selected ask canReadForm()
     if (dir.isEmpty())
         return false;

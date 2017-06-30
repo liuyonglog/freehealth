@@ -430,7 +430,7 @@ void CoreConfigPage::sqliteWarn(int i)
     if (i==INSTALLING_SQLITE) {
         QMessageBox msgBox;
         msgBox.setIcon(QMessageBox::Warning);
-        msgBox.setText("Test FreeMedForms without MySQL");
+        msgBox.setText("Test FreeHealth without MySQL");
         msgBox.setInformativeText(tr("<b>This simplified installation procedure is"
                                      " for testing purposes only.</b> \n"
                                      "It is using SQLite as a temporary"
@@ -569,7 +569,7 @@ bool ClientConfigPage::validatePage()
     settings()->setValue(Core::Constants::S_LASTLOGIN, QString());
     settings()->setValue(Core::Constants::S_LASTPASSWORD, QString());
 
-    // try to connect the MySQL server and test existence of a FreeMedForms configuration
+    // try to connect the MySQL server and test existence of a FreeHealth configuration
     Utils::DatabaseConnector connector = settings()->databaseConnector();
     const QString connection = Utils::createUid();
     QSqlDatabase mysql = QSqlDatabase::addDatabase("QMYSQL", connection);

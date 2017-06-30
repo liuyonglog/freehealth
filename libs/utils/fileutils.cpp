@@ -26,6 +26,7 @@
 #include <fileutils.h>
 
 #include <QDir>
+#include <QDebug>
 
 namespace Utils {
 
@@ -35,9 +36,13 @@ bool copyRecursively(const QString &srcFilePath,
     QFileInfo srcFileInfo(srcFilePath);
     if (srcFileInfo.isDir()) {
         QDir targetDir(tgtFilePath);
-        targetDir.cdUp();
-        if (!targetDir.mkdir(QFileInfo(tgtFilePath).fileName()))
-            return false;
+        if (!targetDir.exists()) {
+            targetDir.cdUp();
+            if (!targetDir.mkdir(QFileInfo(tgtFilePath).fileName())) {
+                qDebug() << QString("Error: cannot create directory %1").arg(tgtFilePath);
+                return false;
+            }
+        }
         QDir sourceDir(srcFilePath);
         QStringList fileNames = sourceDir.entryList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System);
         foreach (const QString &fileName, fileNames) {

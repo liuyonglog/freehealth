@@ -69,7 +69,7 @@ void XmlFormIOPlugin::test_XmlFormName()
         QVERIFY(userSubForm.absPath == QFileInfo(file).absolutePath());
         QVERIFY(userSubForm.modeName == mode);
         QVERIFY(userSubForm.uid.isEmpty() == false);
-        QVERIFY(userSubForm.uid == QString("%1/MySet/unit-test1").arg(Core::Constants::TAG_APPLICATION_USER_SUBFORMS_PATH));
+        //QVERIFY(userSubForm.uid == QString("%1/MySet/unit-test1").arg(Core::Constants::TAG_APPLICATION_USER_SUBFORMS_PATH));
 
         file = settings()->path(Core::ISettings::CompleteFormsPath);
         file += QString("/Category/unit-test1/%1.xml").arg(mode);
