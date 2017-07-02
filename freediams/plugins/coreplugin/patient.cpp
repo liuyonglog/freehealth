@@ -245,7 +245,7 @@ QVariant Patient::data(const QModelIndex &index, int role) const
             } else if (g=="F") {
                 return theme()->icon(Core::Constants::ICONFEMALE);
             } else if (g=="H") {
-                return theme()->icon(Core::Constants::ICONHERMAPHRODISM);
+                return theme()->icon(Core::Constants::ICONOTHERGENDER);
             }
             return QIcon();
         }
